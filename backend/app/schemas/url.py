@@ -5,6 +5,7 @@ from typing import Optional
 
 class URLCreate(BaseModel):
     original_url:HttpUrl
+    custom_code: Optional[str] = None
     expires_at: Optional[datetime] = None
     
 
