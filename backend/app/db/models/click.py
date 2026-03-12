@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Index
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 
@@ -19,3 +19,5 @@ class Click(Base):
     user_agent = Column(String, nullable=True)
     
     url = relationship("URL", back_populates="clicks")
+
+Index("idx_clicks_url_id", Click.url_id)
