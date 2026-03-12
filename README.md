@@ -1,2 +1,2 @@
 # LinkLite
-LinkLite - Scalable URL Shortening Service (FastAPI, PostgreSQL, Redis)
+Under Progress: Status Active 🟢
