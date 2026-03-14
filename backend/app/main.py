@@ -10,9 +10,11 @@ from app.api.routes import analytics_routes
 
 app = FastAPI()
 
+frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3000").strip("/")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[os.getenv("FRONTEND_URL", "http://localhost:3000")],
+    allow_origins=[frontend_url, "http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
