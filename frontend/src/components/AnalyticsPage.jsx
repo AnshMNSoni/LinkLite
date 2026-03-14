@@ -28,7 +28,8 @@ export default function AnalyticsPage() {
     }
   };
 
-  const shortUrl = code ? `http://localhost:8000/${code}` : null;
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+  const shortUrl = code ? `${apiBaseUrl}/${code}` : null;
 
   return (
     <div className="glass-card p-5 sm:p-8 animate-slide-up">

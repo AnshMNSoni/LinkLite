@@ -3,7 +3,8 @@ import CopyButton from "./CopyButton";
 export default function ResultCard({ result }) {
   if (!result) return null;
 
-  const shortUrl = `http://localhost:8000/${result.short_code}`;
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+  const shortUrl = `${apiBaseUrl}/${result.short_code}`;
   const created = new Date(result.created_at).toLocaleString();
 
   return (

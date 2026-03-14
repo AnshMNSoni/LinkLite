@@ -8,6 +8,9 @@ export default function ShortenForm({ setResult }) {
   const [loading, setLoading] = useState(false);
   const { addToast } = useToast();
 
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+  const displayDomain = apiBaseUrl.replace(/^https?:\/\//, "") + "/";
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -69,7 +72,7 @@ export default function ShortenForm({ setResult }) {
               className="hidden sm:flex px-3 py-3 rounded-l-[10px] text-xs font-mono items-center flex-shrink-0"
               style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border-subtle)", borderRight: "none", color: "var(--text-muted)", whiteSpace: "nowrap" }}
             >
-              :8000/
+              {displayDomain}
             </span>
             <input
               type="text"
@@ -81,7 +84,7 @@ export default function ShortenForm({ setResult }) {
             />
           </div>
           <p className="mt-1.5 text-xs sm:hidden" style={{ color: "var(--text-muted)" }}>
-            Will be available at <span className="font-mono text-indigo-400">localhost:8000/{"<code>"}</span>
+            Will be available at <span className="font-mono text-indigo-400">{displayDomain}{"<code>"}</span>
           </p>
         </div>
 
