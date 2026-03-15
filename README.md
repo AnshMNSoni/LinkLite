@@ -6,7 +6,7 @@ LinkLite is a blazing fast, smart URL shortener. Transform long, cluttered links
 - **Instant Shortening**: Less than 1ms response time.
 - **Custom URLs**: Choose your own short code or let the system generate one.
 - **Real-Time Analytics**: Track total clicks and visual daily breakdown of usage over time.
-- **Responsive UI**: A premium, fully-responsive dark mode glassmorphism dashboard built with React and Tailwind CSS.
+- **Responsive UI**: A premium, fully-responsive dark mode glassmorphism dashboard featuring an Emerald Green theme, mobile-optimized floating action buttons, and beautiful calligraphy typography. Built with React and Tailwind CSS.
 - **FastAPI Backend**: Powered by Python, FastAPI, and PostgreSQL.
 
 ## Quick Start

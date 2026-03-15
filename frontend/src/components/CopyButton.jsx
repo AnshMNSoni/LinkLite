@@ -21,8 +21,8 @@ export default function CopyButton({ text, label = "Copy" }) {
       onClick={handleCopy}
       className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
         copied
-          ? "bg-emerald-500/20 border border-emerald-500/40 text-emerald-400"
-          : "bg-brand-500/15 border border-brand-500/30 text-brand-400 hover:bg-brand-500/25"
+          ? "bg-brand-500/10 border border-brand-500/20 text-brand-500"
+          : "bg-surface-800 border border-black/10 text-brand-600 hover:bg-brand-500/15"
       }`}
     >
       {copied ? (

@@ -12,16 +12,9 @@ import {
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
-      <div
-        className="px-3 py-2 rounded-lg text-sm"
-        style={{
-          background: "rgba(15,15,26,0.95)",
-          border: "1px solid rgba(99,102,241,0.3)",
-          backdropFilter: "blur(10px)",
-        }}
-      >
-        <p className="font-semibold text-indigo-300">{label}</p>
-        <p className="text-white mt-0.5">
+      <div className="p-3 bg-surface-elevated border border-black/10 rounded-lg shadow-xl shadow-black/5">
+        <p className="text-xs text-gray-500 mb-1">{label}</p>
+        <p className="text-gray-900 mt-0.5">
           {payload[0].value} click{payload[0].value !== 1 ? "s" : ""}
         </p>
       </div>
@@ -33,8 +26,8 @@ const CustomTooltip = ({ active, payload, label }) => {
 export default function StatsChart({ data }) {
   if (!data || data.length === 0) {
     return (
-      <div className="flex items-center justify-center h-48 rounded-xl" style={{ background: "rgba(255,255,255,0.02)", border: "1px dashed rgba(99,102,241,0.2)" }}>
-        <p className="text-sm" style={{ color: "var(--text-muted)" }}>No click data available</p>
+      <div className="flex items-center justify-center h-48 rounded-xl" style={{ background: "rgba(0,0,0,0.02)", border: "1px dashed rgba(0,0,0,0.1)" }}>
+        <span className="text-sm" style={{ color: "var(--text-muted)" }}>No data available</span>
       </div>
     );
   }
@@ -45,7 +38,13 @@ export default function StatsChart({ data }) {
     <div style={{ width: "100%", height: 220 }}>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="rgba(99,102,241,0.08)" vertical={false} />
+        <defs>
+          <linearGradient id="colorClicks" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+            <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+          </linearGradient>
+        </defs>
+        <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.05)" vertical={false} />
           <XAxis
             dataKey="date"
             tick={{ fill: "#5a5a7a", fontSize: 11 }}
@@ -62,15 +61,15 @@ export default function StatsChart({ data }) {
             tickLine={false}
             allowDecimals={false}
           />
-          <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(99,102,241,0.05)" }} />
+          <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(0,0,0,0.03)" }} />
           <Bar dataKey="clicks" radius={[6, 6, 0, 0]}>
             {data.map((entry, index) => (
               <Cell
                 key={`cell-${index}`}
                 fill={
                   entry.clicks === maxVal
-                    ? "#818cf8"
-                    : `rgba(99, 102, 241, ${0.3 + (entry.clicks / maxVal) * 0.5})`
+                    ? "#10d068"
+                    : `rgba(16, 208, 104, ${0.2 + (entry.clicks / maxVal) * 0.6})`
                 }
               />
             ))}
