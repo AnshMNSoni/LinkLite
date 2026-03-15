@@ -51,16 +51,19 @@ export default function Toast() {
     error: "border-red-500/30 bg-[#2b0c0c]/90",
     info: "border-blue-500/30 bg-[#09172e]/90",
   };
-
   return (
     <div className="toast-container">
       {toasts.map((t) => (
         <div
           key={t.id}
-          className={`flex items-center gap-3 px-4 py-3 rounded-xl border backdrop-blur-xl shadow-2xl pointer-events-auto
-            animate-slide-up ${colors[t.type] || colors.info}`}
-          style={{ minWidth: 240, maxWidth: 360 }}
-        >
+          className="flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg transform transition-all duration-300 pointer-events-auto shadow-black/5"
+          style={{ 
+            background: "rgba(236,253,245,0.95)", // brand-50 with opacity
+            border: "1px solid rgba(16,185,129,0.2)",
+            backdropFilter: "blur(10px)",
+            minWidth: 240, 
+            maxWidth: 360 
+          }}>
           {icons[t.type] || icons.info}
           <span className="text-sm text-gray-900 font-medium">{t.message}</span>
         </div>
