@@ -47,9 +47,9 @@ export default function Toast() {
   };
 
   const colors = {
-    success: "border-emerald-500/30 bg-emerald-950/60",
-    error: "border-red-500/30 bg-red-950/60",
-    info: "border-blue-500/30 bg-blue-950/60",
+    success: "border-brand-500/30 bg-[#072412]/90",
+    error: "border-red-500/30 bg-[#2b0c0c]/90",
+    info: "border-blue-500/30 bg-[#09172e]/90",
   };
 
   return (
@@ -62,7 +62,7 @@ export default function Toast() {
           style={{ minWidth: 240, maxWidth: 360 }}
         >
           {icons[t.type] || icons.info}
-          <span className="text-sm text-white/90 font-medium">{t.message}</span>
+          <span className="text-sm text-gray-900 font-medium">{t.message}</span>
         </div>
       ))}
     </div>

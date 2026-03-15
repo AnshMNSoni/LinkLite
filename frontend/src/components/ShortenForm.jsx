@@ -31,82 +31,70 @@ export default function ShortenForm({ setResult }) {
   return (
     <div className="glass-card p-5 sm:p-8 animate-slide-up">
       <div className="flex items-center gap-3 mb-5 sm:mb-6">
-        <div
-          className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-          style={{ background: "linear-gradient(135deg, rgba(99,102,241,0.2), rgba(139,92,246,0.2))", border: "1px solid rgba(99,102,241,0.3)" }}
-        >
-          <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 sm:w-5 sm:h-5 text-indigo-400">
-            <path d="M12.232 4.232a2.5 2.5 0 013.536 3.536l-1.225 1.224a.75.75 0 001.061 1.06l1.224-1.224a4 4 0 00-5.656-5.656l-3 3a4 4 0 00.225 5.865.75.75 0 00.977-1.138 2.5 2.5 0 01-.142-3.667l3-3z" />
-            <path d="M11.603 7.963a.75.75 0 00-.977 1.138 2.5 2.5 0 01.142 3.667l-3 3a2.5 2.5 0 01-3.536-3.536l1.225-1.224a.75.75 0 00-1.061-1.06l-1.224 1.224a4 4 0 105.656 5.656l3-3a4 4 0 00-.225-5.865z" />
-          </svg>
-        </div>
         <div>
-          <h2 className="font-bold text-base sm:text-lg text-white">Shorten a URL</h2>
-          <p className="text-xs" style={{ color: "var(--text-muted)" }}>Paste your long link and get a shareable short URL</p>
+          <h2 className="font-bold text-lg text-gray-900">Create Short Link</h2>
+          <p className="text-xs" style={{ color: "var(--text-muted)" }}>Paste your long URL to shorten</p>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-5">
         <div>
-          <label className="block text-xs font-medium mb-2" style={{ color: "var(--text-secondary)" }}>
-            Long URL <span className="text-indigo-400">*</span>
+          <label htmlFor="long-url" className="block text-sm font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>
+            Destination URL <span className="text-brand-500" aria-hidden="true">*</span>
           </label>
           <input
+            id="long-url"
             type="url"
-            placeholder="https://example.com/your-long-url"
-            className="input-field text-sm"
+            placeholder="https://example.com/very/long/path"
+            className="input-field text-base py-3"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             required
+            aria-required="true"
           />
         </div>
 
         <div>
-          <label className="block text-xs font-medium mb-2" style={{ color: "var(--text-secondary)" }}>
-            Custom code{" "}
-            <span className="text-xs font-normal" style={{ color: "var(--text-muted)" }}>(optional)</span>
+          <label htmlFor="custom-code" className="block text-sm font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>
+            Custom Alias{" "}
+            <span className="text-xs font-normal" style={{ color: "var(--text-muted)" }}>(Optional)</span>
           </label>
-          {/* On mobile: stack prefix above; on sm+: inline prefix */}
-          <div className="flex items-stretch gap-0">
+          <div className="flex flex-col sm:flex-row items-stretch gap-2 sm:gap-0">
             <span
-              className="hidden sm:flex px-3 py-3 rounded-l-[10px] text-xs font-mono items-center flex-shrink-0"
-              style={{ background: "rgba(255,255,255,0.03)", border: "1px solid var(--border-subtle)", borderRight: "none", color: "var(--text-muted)", whiteSpace: "nowrap" }}
+              className="px-4 py-3 rounded-xl sm:rounded-r-none text-sm font-mono flex items-center sm:flex-shrink-0"
+              style={{ background: "rgba(0,0,0,0.02)", border: "1px solid var(--border-subtle)", smBorderRight: "none", color: "var(--text-muted)" }}
             >
               {displayDomain}
             </span>
             <input
+              id="custom-code"
               type="text"
-              placeholder="my-custom-code"
+              placeholder="my-cool-link"
               className="input-field text-sm sm:rounded-l-none"
-              style={{ borderTopLeftRadius: undefined, borderBottomLeftRadius: undefined }}
+              style={{ borderTopLeftRadius: "0", borderBottomLeftRadius: "0" }}
               value={customCode}
               onChange={(e) => setCustomCode(e.target.value)}
+              aria-label="Custom alias for your short URL"
             />
           </div>
-          <p className="mt-1.5 text-xs sm:hidden" style={{ color: "var(--text-muted)" }}>
-            Will be available at <span className="font-mono text-indigo-400">{displayDomain}{"<code>"}</span>
-          </p>
         </div>
 
         <button
           type="submit"
-          className="btn-brand w-full mt-2 flex items-center justify-center gap-2"
+          className="btn-brand w-full mt-4 flex items-center justify-center gap-2 py-3"
           disabled={loading}
         >
           {loading ? (
             <>
-              <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              <svg className="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="#000" strokeWidth="4" />
+                <path className="opacity-75" fill="#000" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
               </svg>
               <span>Shortening...</span>
             </>
           ) : (
             <>
-              <svg viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
-                <path fillRule="evenodd" d="M12.207 2.232a.75.75 0 00.025 1.06l4.5 4.25a.75.75 0 010 1.06l-4.5 4.25a.75.75 0 11-1.06-1.06L15.193 8.5H3.75a.75.75 0 010-1.5h11.443l-3.522-3.232a.75.75 0 011.036-1.036z" clipRule="evenodd" />
-              </svg>
-              <span>Generate Short URL</span>
+              <span>Shorten URL</span>
             </>
           )}
         </button>
