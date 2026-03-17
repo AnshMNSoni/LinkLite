@@ -1,5 +1,14 @@
 # 🟢 LinkLite
 
+![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python)
+![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688?logo=fastapi)
+![React](https://img.shields.io/badge/React-Frontend-61DAFB?logo=react)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-Styling-38B2AC?logo=tailwind-css)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-336791?logo=postgresql)
+![Vite](https://img.shields.io/badge/Vite-Build-646CFF?logo=vite)
+![Docker](https://img.shields.io/badge/Docker-Containerization-2496ED?logo=docker)
+![License](https://img.shields.io/badge/License-MIT-green)
+
 LinkLite is a blazing fast, smart URL shortener. Transform long, cluttered links into clean, shareable URLs, and track every click with powerful real-time analytics.
 
 ## Features
