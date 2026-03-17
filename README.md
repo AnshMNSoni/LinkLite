@@ -1,4 +1,4 @@
-# 🟢 LinkLite
+# LinkLite
 
 ![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python)
 ![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688?logo=fastapi)
@@ -49,6 +49,9 @@ npm run dev
 ```
 
 Visit `http://localhost:3000` to use the application.
+
+## Project Design
+<img width="1890" height="1346" alt="linklite-design" src="https://github.com/user-attachments/assets/b927c866-02ed-4dda-93af-d8a7a5ae36d5" />
 
 ## Connect with Me
 If you found this project helpful or have any suggestions, feel free to connect:
