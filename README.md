@@ -1,4 +1,4 @@
-# LinkLite
+# 🟢 LinkLite
 
 LinkLite is a blazing fast, smart URL shortener. Transform long, cluttered links into clean, shareable URLs, and track every click with powerful real-time analytics.
 
