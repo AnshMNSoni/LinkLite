@@ -7,7 +7,6 @@
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-336791?logo=postgresql)
 ![Vite](https://img.shields.io/badge/Vite-Build-646CFF?logo=vite)
 ![Docker](https://img.shields.io/badge/Docker-Containerization-2496ED?logo=docker)
-![License](https://img.shields.io/badge/License-MIT-green)
 
 LinkLite is a blazing fast, smart URL shortener. Transform long, cluttered links into clean, shareable URLs, and track every click with powerful real-time analytics.
 
