@@ -25,29 +25,35 @@ if DATABASE_URL:
     is_local = False
     try:
         parsed = urlparse(temp_url)
-        hostname = parsed.hostname
-        if hostname in ("localhost", "127.0.0.1", "postgres", "redis"):
+        hostname = parsed.hostname or ""
+        if (
+            hostname in ("localhost", "127.0.0.1", "postgres", "redis")
+            or hostname.startswith("dpg-")  # Render internal DB
+        ):
             is_local = True
     except Exception:
         pass
 
-    # Strip query params
+    # Strip query params (removes ?sslmode=require&channel_binding=require etc.)
     if "?" in DATABASE_URL:
         DATABASE_URL = DATABASE_URL.split("?")[0]
 
-    # SSL only for production
+    # SSL for production (Neon, Render external, etc.)
     if not is_local:
         ssl_context = ssl.create_default_context()
         ssl_context.check_hostname = False
         ssl_context.verify_mode = ssl.CERT_NONE
         connect_args["ssl"] = ssl_context
+        connect_args["server_settings"] = {
+            "channel_binding": "disable"  # Needed for Neon compatibility with asyncpg
+        }
 
 engine = create_async_engine(
     DATABASE_URL,
     echo=True,
     connect_args=connect_args,
-    pool_pre_ping=True,      # ✅ Drop and recreate stale connections
-    pool_recycle=300,        # ✅ Recycle connections every 5 minutes
+    pool_pre_ping=True,
+    pool_recycle=300,
     pool_size=5,
     max_overflow=10,
 )
