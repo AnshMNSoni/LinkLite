@@ -49,6 +49,40 @@ npm run dev
 
 Visit `http://localhost:3000` to use the application.
 
+## Performance & Benchmarking
+
+We benchmarked the application's redirect lookup performance under a sequential load test of 100 requests. 
+
+Originally, Redis cache hits performed at nearly the same speed as PostgreSQL cold lookups because click logging (SELECT/INSERT) was executed synchronously. We optimized this by caching the URL database IDs in Redis and enqueuing click tracking asynchronously using FastAPI's `BackgroundTasks`.
+
+### Results (Local Docker Environment)
+
+| Metric | Before Optimization | After Optimization | Performance Gain |
+| :--- | :--- | :--- | :--- |
+| **Median Latency (Cache Hit)** | **12.47 ms** | **5.22 ms** | **-58% (Faster)** |
+| **Min Latency (Cache Hit)** | **8.02 ms** | **3.83 ms** | **-52% (Faster)** |
+| **Average Latency (Cache Hit)** | **14.31 ms** | **8.27 ms** | **-42% (Faster)** |
+
+*Under identical conditions, median Redis cache hits (**5.22 ms**) are **41% faster** than PostgreSQL cold lookups (**7.36 ms**).*
+
+### Running the Benchmark
+
+You can measure local redirect performance using the custom HTTP benchmark client:
+
+```bash
+# Install dependencies
+pip install httpx redis
+
+# 1. Clear Redis cache
+docker compose exec redis redis-cli flushall
+
+# 2. Run sequential cache hit benchmark (1st request is cold, next 99 are warm)
+python benchmark.py http://localhost:8000/mn
+
+# 3. Run pure cold lookup benchmark (flushes Redis before every request)
+python benchmark.py http://localhost:8000/mn --flush-each
+```
+
 ## Project Design
 <img width="1890" height="1346" alt="linklite-design" src="https://github.com/user-attachments/assets/b927c866-02ed-4dda-93af-d8a7a5ae36d5" />
 
