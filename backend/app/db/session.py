@@ -37,7 +37,11 @@ if DATABASE_URL:
 
     # Enforce SSL for all cloud/production environments (e.g. Render)
     if not is_local:
-        connect_args["ssl"] = "require"
+        import ssl
+        ssl_context = ssl.create_default_context()
+        ssl_context.check_hostname = False
+        ssl_context.verify_mode = ssl.CERT_NONE
+        connect_args["ssl"] = ssl_context
         # Strip query parameters from the DSN string to prevent dialect parsing issues in SQLAlchemy
         if "?" in DATABASE_URL:
             DATABASE_URL = DATABASE_URL.split("?")[0]
