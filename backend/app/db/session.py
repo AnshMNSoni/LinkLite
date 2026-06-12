@@ -16,11 +16,29 @@ if DATABASE_URL:
     elif DATABASE_URL.startswith("postgresql://") and not DATABASE_URL.startswith("postgresql+asyncpg://"):
         DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
     
-    # Extract SSL requirements from the query string (e.g. sslmode=require or ssl=require)
-    # and configure them explicitly in connect_args to support asyncpg.
-    if "sslmode=" in DATABASE_URL or "ssl=" in DATABASE_URL:
+    # Check if we are running in a local environment (localhost, 127.0.0.1, or docker service postgres)
+    is_local = False
+    from urllib.parse import urlparse
+    # Remove brackets to prevent urlparse ValueError when encountering non-IP bracketed hosts (e.g. [postgres])
+    temp_url = DATABASE_URL.replace("[", "").replace("]", "")
+    if temp_url.startswith("postgresql+asyncpg://"):
+        temp_url = temp_url.replace("postgresql+asyncpg://", "http://", 1)
+    elif temp_url.startswith("postgresql://"):
+        temp_url = temp_url.replace("postgresql://", "http://", 1)
+        
+    try:
+        parsed = urlparse(temp_url)
+        hostname = parsed.hostname
+        if hostname:
+            if hostname in ("localhost", "127.0.0.1", "postgres", "redis"):
+                is_local = True
+    except Exception:
+        pass
+
+    # Enforce SSL for all cloud/production environments (e.g. Render)
+    if not is_local:
         connect_args["ssl"] = "require"
-        # Strip query parameters from the DSN string to prevent dialect parsing issues
+        # Strip query parameters from the DSN string to prevent dialect parsing issues in SQLAlchemy
         if "?" in DATABASE_URL:
             DATABASE_URL = DATABASE_URL.split("?")[0]
 
