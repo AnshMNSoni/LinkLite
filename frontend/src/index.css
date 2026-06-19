@@ -115,6 +115,40 @@ body {
   z-index: 1;
 }
 
+/* Danger (red) button */
+.btn-danger {
+  background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+  color: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.btn-danger::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #fca5a5 0%, #f87171 100%);
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.btn-danger:hover::before {
+  opacity: 1;
+}
+.btn-danger:active {
+  transform: scale(0.98);
+}
+.btn-danger span {
+  position: relative;
+  z-index: 1;
+}
+
 /* Secondary (outline) button */
 .btn-outline {
   background: transparent;

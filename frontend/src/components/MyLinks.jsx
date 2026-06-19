@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { getUserUrls, deleteUrl, updateUrl } from "../api/urls";
 import { useToast } from "./Toast";
 import CopyButton from "./CopyButton";
@@ -11,6 +12,7 @@ export default function MyLinks() {
   const [editHasExpiry, setEditHasExpiry] = useState(false);
   const [editExpiryDate, setEditExpiryDate] = useState("");
   const [saveLoading, setSaveLoading] = useState(false);
+  const [deletingCode, setDeletingCode] = useState(null);
   
   const { addToast } = useToast();
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
@@ -32,14 +34,16 @@ export default function MyLinks() {
     fetchLinks();
   }, []);
 
-  const handleDelete = async (shortCode) => {
-    if (!window.confirm("Are you sure you want to delete this link?")) return;
+  const confirmDelete = async () => {
+    if (!deletingCode) return;
     try {
-      await deleteUrl(shortCode);
+      await deleteUrl(deletingCode);
       addToast("Link deleted successfully.", "success");
-      setLinks(links.filter((l) => l.short_code !== shortCode));
+      setLinks(links.filter((l) => l.short_code !== deletingCode));
     } catch (err) {
       addToast("Failed to delete link.", "error");
+    } finally {
+      setDeletingCode(null);
     }
   };
 
@@ -200,7 +204,7 @@ export default function MyLinks() {
                       Edit
                     </button>
                     <button
-                      onClick={() => handleDelete(link.short_code)}
+                      onClick={() => setDeletingCode(link.short_code)}
                       className="text-gray-400 hover:text-red-600 font-semibold transition-colors flex items-center gap-1"
                     >
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -217,11 +221,11 @@ export default function MyLinks() {
       )}
 
       {/* Edit Modal */}
-      {editingLink && (
-        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4">
-          <div className="fixed inset-0 bg-black/30 backdrop-blur-sm transition-opacity" onClick={() => setEditingLink(null)}></div>
+      {editingLink && createPortal(
+        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 animate-fade-in">
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity" onClick={() => setEditingLink(null)}></div>
 
-          <div className="relative glass-card bg-white w-full max-w-md p-6 shadow-2xl animate-scale-up z-10 border border-gray-100">
+          <div className="relative glass-card bg-white/95 backdrop-blur-md w-full max-w-md p-6 sm:p-8 shadow-2xl animate-scale-up z-10 border border-gray-150/40">
             <h3 className="text-lg font-bold text-gray-900 mb-4">Edit Link Destination</h3>
             
             <form onSubmit={handleSaveEdit} className="space-y-4">
@@ -295,14 +299,14 @@ export default function MyLinks() {
                 <button
                   type="button"
                   onClick={() => setEditingLink(null)}
-                  className="px-4 py-2 text-sm font-semibold border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                  className="px-4 py-2 text-sm font-semibold border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saveLoading}
-                  className="btn-brand px-5 py-2 text-sm font-semibold flex items-center gap-1.5"
+                  className="btn-brand px-5 py-2 text-sm font-semibold flex items-center gap-1.5 cursor-pointer"
                 >
                   {saveLoading && (
                     <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
@@ -315,7 +319,43 @@ export default function MyLinks() {
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deletingCode && createPortal(
+        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 animate-fade-in">
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity" onClick={() => setDeletingCode(null)}></div>
+
+          <div className="relative glass-card bg-white/95 backdrop-blur-md w-full max-w-sm p-6 sm:p-8 shadow-2xl animate-scale-up z-10 border border-gray-150/40 text-center space-y-4">
+            <div className="inline-flex p-3 rounded-full bg-red-50 border border-red-100 text-red-500">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-bold text-gray-900">Delete Short Link</h3>
+            <p className="text-sm text-gray-500 max-w-xs mx-auto">
+              Are you sure you want to delete <span className="font-mono font-semibold text-brand-600">/{deletingCode}</span>? This action cannot be undone.
+            </p>
+            <div className="flex items-center justify-center gap-3 pt-3">
+              <button
+                type="button"
+                onClick={() => setDeletingCode(null)}
+                className="px-5 py-2.5 text-sm font-semibold rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-all cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="btn-danger px-5 py-2.5 text-sm flex items-center justify-center gap-1.5 shadow-[0_4px_12px_rgba(239,68,68,0.15)] hover:shadow-[0_4px_15px_rgba(239,68,68,0.25)]"
+              >
+                <span>Delete Link</span>
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
       )}
     </div>
   );

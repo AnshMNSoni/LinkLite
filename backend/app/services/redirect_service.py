@@ -52,15 +52,14 @@ async def record_click_task(
     user_agent: str | None = None
 ):
     """
-    Background task to record url clicks asynchronously without blocking client redirects.
-    Uses its own database session.
+    Buffer click events in Redis List queue to be batched and saved to DB by flusher worker.
     """
-    async with AsyncSessionLocal() as db:
-        click = Click(
-            url_id=url_id,
-            ip_address=ip_address,
-            user_agent=user_agent
-        )
-        db.add(click)
-        await db.commit()
+    from datetime import timezone
+    click_data = {
+        "url_id": url_id,
+        "ip_address": ip_address,
+        "user_agent": user_agent,
+        "clicked_at": datetime.now(timezone.utc).isoformat()
+    }
+    await redis_client.rpush("clicks_queue", json.dumps(click_data))
 

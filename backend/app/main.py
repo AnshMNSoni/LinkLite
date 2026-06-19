@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import os
+import asyncio
 
 from app.db.base import Base
 from app.db.session import engine
@@ -13,6 +14,7 @@ from app.api.routes import url_routes
 from app.api.routes import redirect_routes
 from app.api.routes import analytics_routes
 from app.api.routes import auth_routes
+from app.services.click_buffer_service import click_flusher_worker
 
 app = FastAPI()
 
@@ -30,6 +32,20 @@ app.add_middleware(
 async def startup():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+    
+    # Start the click flusher background worker
+    app.state.click_flusher = asyncio.create_task(click_flusher_worker())
+
+
+@app.on_event("shutdown")
+async def shutdown():
+    # Cleanly stop and flush click worker on shutdown
+    if hasattr(app.state, "click_flusher"):
+        app.state.click_flusher.cancel()
+        try:
+            await app.state.click_flusher
+        except asyncio.CancelledError:
+            pass
 
 
 app.include_router(auth_routes.router)
