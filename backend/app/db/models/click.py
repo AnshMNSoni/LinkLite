@@ -18,6 +18,8 @@ class Click(Base):
     
     user_agent = Column(String, nullable=True)
     
+    referrer = Column(String, nullable=True)
+    
     url = relationship("URL", back_populates="clicks")
 
 Index("idx_clicks_url_id", Click.url_id)

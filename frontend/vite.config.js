@@ -6,6 +6,7 @@ export default defineConfig({
   server: {
     port: 3000,
     proxy: {
+      "/auth": "http://localhost:8000",
       "/urls": "http://localhost:8000",
       "/analytics": "http://localhost:8000",
     },

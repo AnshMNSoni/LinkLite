@@ -6,3 +6,5 @@ redis
 python-dotenv
 pydantic
 asyncpg
+python-jose[cryptography]
+httpx

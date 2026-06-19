@@ -46,20 +46,29 @@ export default function Toast() {
     ),
   };
 
-  const colors = {
-    success: "border-brand-500/30 bg-[#072412]/90",
-    error: "border-red-500/30 bg-[#2b0c0c]/90",
-    info: "border-blue-500/30 bg-[#09172e]/90",
+  const toastStyles = {
+    success: {
+      background: "rgba(236,253,245,0.95)",
+      border: "1px solid rgba(16,185,129,0.2)",
+    },
+    error: {
+      background: "rgba(254,242,242,0.95)",
+      border: "1px solid rgba(239,68,68,0.2)",
+    },
+    info: {
+      background: "rgba(239,246,255,0.95)",
+      border: "1px solid rgba(59,130,246,0.2)",
+    },
   };
+
   return (
     <div className="toast-container">
       {toasts.map((t) => (
         <div
           key={t.id}
-          className="flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg transform transition-all duration-300 pointer-events-auto shadow-black/5"
+          className="toast-item flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg pointer-events-auto shadow-black/5"
           style={{ 
-            background: "rgba(236,253,245,0.95)", // brand-50 with opacity
-            border: "1px solid rgba(16,185,129,0.2)",
+            ...(toastStyles[t.type] || toastStyles.info),
             backdropFilter: "blur(10px)",
             minWidth: 240, 
             maxWidth: 360 
