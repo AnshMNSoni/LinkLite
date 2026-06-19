@@ -1,6 +1,9 @@
+import os
 from fastapi import APIRouter, Depends, HTTPException, Request, BackgroundTasks
 from fastapi.responses import RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
+
+frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3000").strip("/")
 
 from app.services.redirect_service import get_original_url, record_click_task
 from app.db.session import get_db
@@ -24,10 +27,10 @@ async def redirect_to_url(
     )
     
     if original_url == "EXPIRED":
-        raise HTTPException(status_code=410, detail="URL expired")
+        return RedirectResponse(f"{frontend_url}/expired", status_code=302)
     
     if not original_url:
-        raise HTTPException(status_code=404, detail="URL NOT FOUND")
+        return RedirectResponse(f"{frontend_url}/not-found", status_code=302)
 
     # Log the click event asynchronously in the background to prevent blocking the redirect
     if url_id:

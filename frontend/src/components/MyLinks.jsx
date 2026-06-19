@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import QRCode from "qrcode";
 import { getUserUrls, deleteUrl, updateUrl } from "../api/urls";
 import { useToast } from "./Toast";
 import CopyButton from "./CopyButton";
@@ -13,8 +14,38 @@ export default function MyLinks() {
   const [editExpiryDate, setEditExpiryDate] = useState("");
   const [saveLoading, setSaveLoading] = useState(false);
   const [deletingCode, setDeletingCode] = useState(null);
+  const [qrLink, setQrLink] = useState(null);
+  const [qrCodeUrl, setQrCodeUrl] = useState("");
   
   const { addToast } = useToast();
+
+  useEffect(() => {
+    if (qrLink) {
+      const shortUrl = formatShortLink(qrLink.short_code);
+      QRCode.toDataURL(shortUrl, {
+        width: 256,
+        margin: 2,
+        color: {
+          dark: "#0f172a",
+          light: "#ffffff",
+        },
+      })
+        .then((url) => setQrCodeUrl(url))
+        .catch((err) => console.error("Error generating QR code", err));
+    } else {
+      setQrCodeUrl("");
+    }
+  }, [qrLink]);
+
+  const handleDownloadQr = () => {
+    if (!qrLink || !qrCodeUrl) return;
+    const link = document.createElement("a");
+    link.href = qrCodeUrl;
+    link.download = `qr_${qrLink.short_code}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
   const fetchLinks = async () => {
@@ -193,10 +224,24 @@ export default function MyLinks() {
                   </div>
 
                   {/* Actions */}
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3.5">
+                    <button
+                      onClick={() => setQrLink(link)}
+                      className="text-gray-600 hover:text-brand-500 font-semibold transition-colors flex items-center gap-1 cursor-pointer"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <rect x="2" y="2" width="7" height="7" rx="1.5" strokeWidth="2" />
+                        <rect x="2" y="15" width="7" height="7" rx="1.5" strokeWidth="2" />
+                        <rect x="15" y="2" width="7" height="7" rx="1.5" strokeWidth="2" />
+                        <rect x="15" y="15" width="3" height="3" rx="0.5" strokeWidth="2" />
+                        <rect x="19" y="19" width="3" height="3" rx="0.5" strokeWidth="2" />
+                        <path d="M15 19h.01M19 15h.01" strokeWidth="3" strokeLinecap="round" />
+                      </svg>
+                      QR Code
+                    </button>
                     <button
                       onClick={() => handleStartEdit(link)}
-                      className="text-gray-600 hover:text-brand-500 font-semibold transition-colors flex items-center gap-1"
+                      className="text-gray-600 hover:text-brand-500 font-semibold transition-colors flex items-center gap-1 cursor-pointer"
                     >
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -351,6 +396,54 @@ export default function MyLinks() {
                 className="btn-danger px-5 py-2.5 text-sm flex items-center justify-center gap-1.5 shadow-[0_4px_12px_rgba(239,68,68,0.15)] hover:shadow-[0_4px_15px_rgba(239,68,68,0.25)]"
               >
                 <span>Delete Link</span>
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* QR Code Modal */}
+      {qrLink && createPortal(
+        <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4 animate-fade-in">
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity" onClick={() => setQrLink(null)}></div>
+          
+          <div className="relative glass-card bg-white/95 backdrop-blur-md w-full max-w-sm p-6 sm:p-8 shadow-2xl animate-scale-up z-10 border border-gray-150/40 text-center space-y-4">
+            <h3 className="text-lg font-bold text-gray-900">QR Code for link</h3>
+            <div className="font-mono text-xs text-brand-600 bg-brand-50/50 py-1.5 px-3 rounded-lg border border-brand-100 inline-block truncate max-w-full">
+              {formatShortLink(qrLink.short_code)}
+            </div>
+            
+            <div className="flex justify-center pt-2">
+              {qrCodeUrl ? (
+                <div className="bg-white p-3 rounded-xl border border-gray-200 shadow-sm flex items-center justify-center">
+                  <img src={qrCodeUrl} alt="QR Code" className="w-48 h-48" />
+                </div>
+              ) : (
+                <div className="w-48 h-48 rounded-xl bg-gray-100 animate-pulse" />
+              )}
+            </div>
+
+            <p className="text-xs text-gray-500 max-w-xs mx-auto">
+              Scan this QR code with any device to instantly redirect to the destination URL.
+            </p>
+
+            <div className="flex items-center justify-center gap-3 pt-3 border-t border-gray-50">
+              <button
+                type="button"
+                onClick={() => setQrLink(null)}
+                className="px-5 py-2.5 text-sm font-semibold rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-all cursor-pointer"
+              >
+                Close
+              </button>
+              <button
+                onClick={handleDownloadQr}
+                className="btn-brand px-5 py-2.5 text-sm font-semibold flex items-center gap-1.5 cursor-pointer shadow-md"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                <span>Download PNG</span>
               </button>
             </div>
           </div>
