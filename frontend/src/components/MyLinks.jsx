@@ -173,14 +173,17 @@ export default function MyLinks() {
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1 space-y-1">
-                    <div className="flex flex-wrap items-center gap-2">
+                    <div className="flex items-center gap-2">
                       <a
                         href={shortLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="font-mono text-brand-600 font-semibold hover:underline break-all text-sm sm:text-base"
+                        className="font-mono text-brand-600 font-semibold hover:underline text-sm sm:text-base truncate"
                       >
-                        {apiBaseUrl.replace(/^https?:\/\//, "")}/{link.short_code}
+                        <span className="text-gray-400 font-normal hidden sm:inline">
+                          {apiBaseUrl.replace(/^https?:\/\//, "")}
+                        </span>
+                        /{link.short_code}
                       </a>
                       <CopyButton text={shortLink} />
                     </div>

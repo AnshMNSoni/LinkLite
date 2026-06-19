@@ -21,6 +21,95 @@ const DonutTooltip = ({ active, payload }) => {
   return null;
 };
 
+const getReferrerIcon = (name) => {
+  const cleanName = name.toLowerCase();
+  if (cleanName.includes("google")) {
+    return (
+      <svg className="w-3.5 h-3.5 text-gray-500 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12.24 10.285V14.4h6.887c-.648 2.41-2.519 4.114-5.136 4.114-3.483 0-6.312-2.829-6.312-6.312S10.51 5.89 13.99 5.89c1.672 0 3.12.57 4.254 1.637l3.123-3.123C19.467 2.656 16.924 1.5 13.99 1.5 8.196 1.5 3.5 6.196 3.5 12s4.696 10.5 10.49 10.5c5.795 0 10.01-4.074 10.01-10.2 0-.686-.062-1.354-.187-2.015H12.24z" />
+      </svg>
+    );
+  }
+  if (cleanName.includes("linkedin")) {
+    return (
+      <svg className="w-3.5 h-3.5 text-[#0077b5] flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+      </svg>
+    );
+  }
+  if (cleanName.includes("twitter") || cleanName.includes("x.com")) {
+    return (
+      <svg className="w-3.5 h-3.5 text-black flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+      </svg>
+    );
+  }
+  if (cleanName.includes("facebook")) {
+    return (
+      <svg className="w-3.5 h-3.5 text-[#1877f2] flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c4.56-.93 8-4.96 8-9.75z" />
+      </svg>
+    );
+  }
+  if (cleanName.includes("instagram")) {
+    return (
+      <svg className="w-3.5 h-3.5 text-[#e1306c] flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+      </svg>
+    );
+  }
+  if (cleanName.includes("github")) {
+    return (
+      <svg className="w-3.5 h-3.5 text-black flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+        <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.577.688.479C19.138 20.162 22 16.418 22 12c0-5.523-4.477-10-10-10z" />
+      </svg>
+    );
+  }
+  if (cleanName.includes("youtube")) {
+    return (
+      <svg className="w-3.5 h-3.5 text-[#ff0000] flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M23.498 6.163a3.003 3.003 0 0 0-2.11-2.107C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.388.511a3.002 3.002 0 0 0-2.11 2.107C0 8.053 0 12 0 12s0 3.947.502 5.837a3.003 3.003 0 0 0 2.11 2.107C4.495 20.455 12 20.455 12 20.455s7.505 0 9.388-.511a3.002 3.002 0 0 0 2.11-2.107C24 15.947 24 12 24 12s0-3.947-.502-5.837zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+      </svg>
+    );
+  }
+  if (cleanName.includes("reddit")) {
+    return (
+      <svg className="w-3.5 h-3.5 text-[#ff4500] flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M24 11.5c0-1.65-1.35-3-3-3-.96 0-1.86.48-2.42 1.24-1.64-1-3.85-1.64-6.23-1.72l1.3-4.14 4.23.9c.04.97.84 1.75 1.82 1.75 1.01 0 1.83-.82 1.83-1.83 0-1.01-.82-1.83-1.83-1.83-.75 0-1.4.45-1.69 1.1l-4.79-1.02c-.22-.05-.44.08-.51.3l-1.5 4.77C7.07 7.86 4.88 8.5 3.24 9.49 2.68 8.73 1.78 8.25.8 8.25c-1.65 0-3 1.35-3 3 0 1.2.7 2.23 1.72 2.72-.03.18-.05.36-.05.54 0 3.86 4.43 7 9.9 7s9.9-3.14 9.9-7c0-.18-.02-.36-.05-.54 1.02-.49 1.72-1.52 1.72-2.72zM6 13.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5c0 .83-.67 1.5-1.5 1.5S6 14.33 6 13.5zm10.75 4.5c-1.5 1.5-4.25 1.5-5.75 0-.15-.15-.15-.39 0-.54.15-.15.39-.15.54 0 1.2 1.2 3.47 1.2 4.67 0 .15-.15.39-.15.54 0 .15.15.15.39 0 .54zm-.25-3c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z" />
+      </svg>
+    );
+  }
+  if (cleanName.includes("whatsapp")) {
+    return (
+      <svg className="w-3.5 h-3.5 text-[#25d366] flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.513 2.262 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.458L0 24zm6.59-4.846c1.6.95 3.51 1.45 5.4 1.45 5.55 0 10.06-4.51 10.06-10.06C22.1 5.03 17.59.5 12.04.5 6.48.5 1.98 5.02 1.97 10.58c0 1.9.49 3.75 1.43 5.36l-.99 3.61 3.7-.97.47.27zM17.486 14.4c-.3-.15-1.782-.88-2.062-1-.28-.1-.48-.15-.68.15-.2.3-.78 1-.96 1.2-.18.2-.36.2-.66.05-1.05-.53-1.83-.93-2.54-1.63-.37-.3-.72-.73-1.03-1.12-.24-.3-.02-.47.13-.62.13-.13.3-.35.45-.53.15-.18.2-.3.3-.5.1-.2.05-.38-.02-.53-.07-.15-.68-1.62-.93-2.22-.24-.58-.49-.5-.68-.5-.18 0-.39-.02-.6-.02-.2 0-.53.07-.8.38-.28.3-1.08 1.05-1.08 2.57s1.1 3 1.26 3.21c.15.22 2.18 3.33 5.28 4.67.74.32 1.31.5 1.76.64.74.24 1.4.2 1.94.12.6-.08 1.782-.73 2.032-1.43.25-.7.25-1.3.17-1.43-.08-.13-.28-.21-.58-.36z" />
+      </svg>
+    );
+  }
+  if (cleanName.includes("direct") || cleanName.includes("email")) {
+    return (
+      <svg className="w-3.5 h-3.5 text-brand-500 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+      </svg>
+    );
+  }
+  if (cleanName.includes("peerlist")) {
+    return (
+      <svg className="w-3.5 h-3.5 text-[#00e676] flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+        <circle cx="12" cy="12" r="10" fill="#00e676" opacity="0.1" />
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
+      </svg>
+    );
+  }
+  return (
+    <svg className="w-3.5 h-3.5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
+    </svg>
+  );
+};
+
 export default function AnalyticsPage({ user, setRoute }) {
   const [code, setCode] = useState("");
   const [data, setData] = useState(null);
@@ -262,9 +351,12 @@ export default function AnalyticsPage({ user, setRoute }) {
                         const percentage = Math.round((r.clicks / totalClicksCount) * 100);
                         return (
                           <div key={r.name} className="space-y-1">
-                            <div className="flex items-center justify-between text-xs">
-                              <span className="font-semibold text-gray-700">{r.name}</span>
-                              <span className="text-gray-500 font-medium">
+                            <div className="flex items-center justify-between text-xs gap-2">
+                              <div className="flex items-center gap-1.5 font-semibold text-gray-700 min-w-0">
+                                {getReferrerIcon(r.name)}
+                                <span className="truncate" title={r.name}>{r.name}</span>
+                              </div>
+                              <span className="text-gray-500 font-medium flex-shrink-0">
                                 {r.clicks} click{r.clicks !== 1 ? "s" : ""} ({percentage}%)
                               </span>
                             </div>
