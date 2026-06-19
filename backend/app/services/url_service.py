@@ -9,6 +9,50 @@ from app.utils.base62 import encode_base62
 from app.cache.redis_client import redis_client
 
 
+def check_url_safety(original_url: str):
+    blocked_domains = [
+        "test-malicious.com",
+        "phishing-test.org",
+        "malware-installer.net",
+        "virus-spreader.ru"
+    ]
+    suspicious_keywords = [
+        "phishing",
+        "malware",
+        "virus",
+        "login-update",
+        "verify-account",
+        "wp-login.php",
+        "signin-spoof"
+    ]
+    
+    url_lower = original_url.lower()
+    
+    # 1. Parse and check blocked domains
+    try:
+        from urllib.parse import urlparse
+        parsed = urlparse(url_lower)
+        domain = parsed.netloc or parsed.path
+        for blocked in blocked_domains:
+            if blocked in domain:
+                raise HTTPException(
+                    status_code=400,
+                    detail="The URL provided has been flagged as unsafe or malicious."
+                )
+    except HTTPException:
+        raise
+    except Exception:
+        pass
+        
+    # 2. Check suspicious keywords in full path/query
+    for keyword in suspicious_keywords:
+        if keyword in url_lower:
+            raise HTTPException(
+                status_code=400,
+                detail="The URL provided contains content flagged as suspicious or malicious."
+            )
+
+
 async def create_short_url(
     db: AsyncSession,
     original_url: str,
@@ -16,6 +60,7 @@ async def create_short_url(
     expires_at: datetime | None = None,
     user_id: int | None = None
 ):
+    check_url_safety(original_url)
 
     if custom_code:
 

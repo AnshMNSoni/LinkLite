@@ -3,13 +3,18 @@ import Navbar from "./components/Navbar";
 import HeroSection from "./components/HeroSection";
 import ShortenForm from "./components/ShortenForm";
 import ResultCard from "./components/ResultCard";
-import AnalyticsPage from "./components/AnalyticsPage";
 import MyLinks from "./components/MyLinks";
 import Toast from "./components/Toast";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState("shorten");
   const [route, setRoute] = useState(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const errorParam = urlParams.get("error");
+    if (errorParam === "expired") return "expired";
+    if (errorParam === "not-found") return "not-found";
+    if (errorParam === "unauthorized") return "unauthorized";
+
     const path = window.location.pathname.replace(/\/$/, "");
     if (path === "/expired") return "expired";
     if (path === "/not-found") return "not-found";
@@ -119,21 +124,6 @@ export default function App() {
             {/* Hero — only on shorten tab */}
             {activeTab === "shorten" && <HeroSection />}
 
-            {/* Analytics tab has its own header */}
-            {activeTab === "analytics" && (
-              <header className="pt-8 sm:pt-12 pb-4 sm:pb-6 text-center animate-fade-in">
-                <h1
-                  className="text-3xl sm:text-4xl sm:text-5xl font-bold tracking-tight mb-2"
-                  style={{ fontFamily: "'Dancing Script', cursive" }}
-                >
-                  Click <span className="gradient-text-brand">Analytics</span>
-                </h1>
-                <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-                  Real-time performance tracking for your links
-                </p>
-              </header>
-            )}
-
             {/* My Links tab has its own header */}
             {activeTab === "my-links" && (
               <header className="pt-8 sm:pt-12 pb-4 sm:pb-6 text-center animate-fade-in">
@@ -144,7 +134,7 @@ export default function App() {
                   My <span className="gradient-text-brand">Links</span>
                 </h1>
                 <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
-                  Manage and edit your shortened URLs
+                  Manage, edit, and track your shortened URLs
                 </p>
               </header>
             )}
@@ -157,8 +147,7 @@ export default function App() {
                   {result && <ResultCard result={result} />}
                 </>
               )}
-              {activeTab === "my-links" && user && <MyLinks />}
-              {activeTab === "analytics" && <AnalyticsPage user={user} setRoute={setRoute} />}
+              {activeTab === "my-links" && <MyLinks user={user} onLogin={handleLogin} />}
             </div>
 
             {/* Footer */}
@@ -201,28 +190,15 @@ export default function App() {
               Shorten
             </button>
 
-            {user && (
-              <button
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${activeTab === "my-links"
-                    ? "bg-brand-500 text-white shadow-[0_0_15px_rgba(16,185,129,0.3)]"
-                    : "text-gray-500 hover:text-gray-900"
-                  }`}
-                onClick={() => handleTabChange("my-links")}
-                aria-pressed={activeTab === "my-links"}
-              >
-                Links
-              </button>
-            )}
-
             <button
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${activeTab === "analytics"
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${activeTab === "my-links"
                   ? "bg-brand-500 text-white shadow-[0_0_15px_rgba(16,185,129,0.3)]"
                   : "text-gray-500 hover:text-gray-900"
                 }`}
-              onClick={() => handleTabChange("analytics")}
-              aria-pressed={activeTab === "analytics"}
+              onClick={() => handleTabChange("my-links")}
+              aria-pressed={activeTab === "my-links"}
             >
-              Analysis
+              Links
             </button>
           </div>
         </div>

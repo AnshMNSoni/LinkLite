@@ -69,22 +69,12 @@ export default function Navbar({ activeTab, onTabChange, user, onLogin, onLogout
             Shorten
           </button>
           
-          {user && (
-            <button
-              className={`tab-btn text-sm px-5 py-1.5 ${activeTab === "my-links" ? "active" : ""}`}
-              onClick={() => onTabChange("my-links")}
-              aria-pressed={activeTab === "my-links"}
-            >
-              My Links
-            </button>
-          )}
-
           <button
-            className={`tab-btn text-sm px-5 py-1.5 ${activeTab === "analytics" ? "active" : ""}`}
-            onClick={() => onTabChange("analytics")}
-            aria-pressed={activeTab === "analytics"}
+            className={`tab-btn text-sm px-5 py-1.5 ${activeTab === "my-links" ? "active" : ""}`}
+            onClick={() => onTabChange("my-links")}
+            aria-pressed={activeTab === "my-links"}
           >
-            Analytics
+            My Links
           </button>
         </div>
 

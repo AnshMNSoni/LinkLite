@@ -27,10 +27,10 @@ async def redirect_to_url(
     )
     
     if original_url == "EXPIRED":
-        return RedirectResponse(f"{frontend_url}/expired", status_code=302)
+        return RedirectResponse(f"{frontend_url}/?error=expired", status_code=302)
     
     if not original_url:
-        return RedirectResponse(f"{frontend_url}/not-found", status_code=302)
+        return RedirectResponse(f"{frontend_url}/?error=not-found", status_code=302)
 
     referrer = request.headers.get("referer") or request.headers.get("referrer")
     # Log the click event asynchronously in the background to prevent blocking the redirect

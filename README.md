@@ -10,7 +10,7 @@
 
 LinkLite is a URL shortener built with FastAPI, PostgreSQL, Redis, React, and Docker.
 
-The project explores caching, asynchronous analytics processing, and performance optimization in a read-heavy system. It implements a cache-aside architecture with Redis, asynchronous click tracking using FastAPI `BackgroundTasks`, and reproducible benchmark tooling for measuring redirect latency.
+The project explores caching, asynchronous analytics processing, and performance optimization in a read-heavy system. It implements a cache-aside architecture with Redis, asynchronous click tracking using FastAPI `BackgroundTasks`, rate limiting, and URL expiration policies.
 
 ---
 
@@ -21,6 +21,10 @@ The project explores caching, asynchronous analytics processing, and performance
 * **Analytics Dashboard** – Track clicks and visualize usage trends over time.
 * **Redis Cache Layer** – Cache-aside architecture for low-latency redirects.
 * **Asynchronous Click Tracking** – Analytics logging moved off the request critical path using FastAPI `BackgroundTasks`.
+* **Rate Limiting** – Prevent API abuse by limiting request frequencies based on IP.
+* **URL Expiration** – Configure custom expiration dates and times for shortened links.
+* **User Authentication & Ownership** – Secure user signup, login, and private dashboard to manage links.
+* **URL Safety Verification** – Built-in verification scanner checking URLs against suspicious keywords and blocked domains to prevent malicious links.
 * **Responsive React UI** – Mobile-friendly dashboard built with React, Vite, and Tailwind CSS.
 * **Dockerized Development Environment** – One-command local setup.
 
@@ -42,81 +46,7 @@ LinkLite follows a cache-aside architecture optimized for read-heavy redirect wo
 
 Redirect endpoints are highly read-intensive. A cache layer reduces database load and improves latency, while asynchronous analytics prevent click tracking from blocking redirects.
 
----
 
-## Performance Investigation
-
-One of the primary goals of this project was understanding how caching impacts real-world application latency.
-
-Initially, Redis cache hits performed almost identically to PostgreSQL cold lookups:
-
-| Metric                   | Before Optimization |
-| ------------------------ | ------------------- |
-| Median Cache Hit Latency | 12.47 ms            |
-
-Investigation revealed that Redis was not the bottleneck.
-
-Even on cache hits, the request path still executed synchronous analytics queries:
-
-* `SELECT url_id`
-* `INSERT click`
-
-As a result, PostgreSQL remained on the critical path despite successful cache hits.
-
-### Optimization
-
-Two changes eliminated unnecessary database work:
-
-1. Cached both the destination URL and `url_id` in Redis.
-2. Moved click logging to FastAPI `BackgroundTasks`.
-
-This removed synchronous analytics operations from the redirect path.
-
-### Results (100 Sequential Requests, Local Docker Environment)
-
-| Metric                      | Before Optimization | After Optimization | Improvement |
-| --------------------------- | ------------------- | ------------------ | ----------- |
-| Median Latency (Cache Hit)  | 12.47 ms            | **5.22 ms**        | **-58%**    |
-| Minimum Latency (Cache Hit) | 8.02 ms             | **3.83 ms**        | **-52%**    |
-| Average Latency (Cache Hit) | 14.31 ms            | **8.27 ms**        | **-42%**    |
-
-Under identical test conditions:
-
-* Redis cache hits: **5.22 ms median**
-* PostgreSQL cold lookups: **7.36 ms median**
-
-Redis cache hits were approximately **41% faster** than cold PostgreSQL lookups.
-
-> Note:
-> Benchmarks were performed using 100 sequential requests in a local Docker environment. These measurements illustrate request-path latency improvements and should not be interpreted as production-scale throughput benchmarks.
-
----
-
-## Running the Benchmark
-
-Install benchmark dependencies:
-
-```bash
-pip install httpx redis
-```
-
-Run a warm-cache benchmark:
-
-```bash
-docker compose exec redis redis-cli flushall
-
-python benchmark.py http://localhost:8000/mn
-```
-
-Run a cold PostgreSQL baseline:
-
-```bash
-python benchmark.py http://localhost:8000/mn --flush-each
-```
-
-The `--flush-each` option clears Redis before every request, forcing all lookups through PostgreSQL.
-
----
 
 ## Quick Start
 
@@ -194,10 +124,7 @@ URL mappings require durable storage, indexing, and transactional consistency. P
 * Concurrent load testing
 * p95 and p99 latency measurements
 * Redis failure recovery strategies
-* Rate limiting
 * Distributed analytics pipeline
-* URL expiration policies
-* User authentication and ownership
 
 ---
 

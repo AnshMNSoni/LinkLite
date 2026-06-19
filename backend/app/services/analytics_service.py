@@ -86,47 +86,32 @@ def parse_referrer(ref: str) -> str:
         return "Direct / Email"
     
     ref = ref.lower()
-    if ref.startswith("android-app://"):
-        if "linkedin" in ref:
-            return "LinkedIn"
-        if "twitter" in ref or "t.co" in ref:
-            return "Twitter / X"
-        if "facebook" in ref:
-            return "Facebook"
-        if "instagram" in ref:
-            return "Instagram"
-        if "whatsapp" in ref:
-            return "WhatsApp"
-        if "peerlist" in ref:
-            return "Peerlist"
     
+    # Keyword-based normalization for app packages and domain strings
+    if "linkedin" in ref:
+        return "LinkedIn"
+    if "twitter" in ref or "t.co" in ref or "x.com" in ref:
+        return "Twitter / X"
+    if "facebook" in ref or "fb.me" in ref:
+        return "Facebook"
+    if "instagram" in ref:
+        return "Instagram"
+    if "peerlist" in ref:
+        return "Peerlist"
+    if "github" in ref:
+        return "GitHub"
+    if "youtube" in ref:
+        return "YouTube"
+    if "reddit" in ref:
+        return "Reddit"
+    if "whatsapp" in ref:
+        return "WhatsApp"
+    if "google" in ref:
+        return "Google"
+        
     try:
         parsed = urlparse(ref)
-        domain = parsed.netloc
-        if not domain:
-            domain = parsed.path
-        
-        if "linkedin.com" in domain:
-            return "LinkedIn"
-        elif "t.co" in domain or "twitter.com" in domain or "x.com" in domain:
-            return "Twitter / X"
-        elif "facebook.com" in domain or "fb.me" in domain:
-            return "Facebook"
-        elif "instagram.com" in domain:
-            return "Instagram"
-        elif "peerlist.io" in domain:
-            return "Peerlist"
-        elif "github.com" in domain:
-            return "GitHub"
-        elif "google.com" in domain:
-            return "Google"
-        elif "youtube.com" in domain:
-            return "YouTube"
-        elif "reddit.com" in domain:
-            return "Reddit"
-        elif "whatsapp.com" in domain:
-            return "WhatsApp"
-        
+        domain = parsed.netloc or parsed.path
         clean_domain = domain.replace("www.", "")
         return clean_domain if clean_domain else "Direct / Email"
     except Exception:
