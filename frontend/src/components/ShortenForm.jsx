@@ -66,7 +66,7 @@ export default function ShortenForm({ setResult, user }) {
           </label>
           <div className="flex flex-col sm:flex-row items-stretch gap-2 sm:gap-0">
             <span
-              className="px-4 py-3 rounded-xl sm:rounded-r-none text-sm font-mono flex items-center sm:flex-shrink-0"
+              className="hidden sm:flex px-4 py-3 rounded-xl sm:rounded-r-none text-sm font-mono items-center sm:flex-shrink-0"
               style={{ background: "rgba(0,0,0,0.02)", border: "1px solid var(--border-subtle)", smBorderRight: "none", color: "var(--text-muted)" }}
             >
               {displayDomain}
@@ -75,8 +75,7 @@ export default function ShortenForm({ setResult, user }) {
               id="custom-code"
               type="text"
               placeholder="my-cool-link"
-              className="input-field text-sm sm:rounded-l-none"
-              style={{ borderTopLeftRadius: "0", borderBottomLeftRadius: "0" }}
+              className="input-field text-sm rounded-xl sm:rounded-l-none"
               value={customCode}
               onChange={(e) => setCustomCode(e.target.value)}
               aria-label="Custom alias for your short URL"
