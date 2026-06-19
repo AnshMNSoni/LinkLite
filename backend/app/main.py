@@ -4,9 +4,15 @@ import os
 
 from app.db.base import Base
 from app.db.session import engine
+# Explicitly import models so Base.metadata is aware of them on startup
+from app.db.models.user import User
+from app.db.models.url import URL
+from app.db.models.click import Click
+
 from app.api.routes import url_routes
 from app.api.routes import redirect_routes
 from app.api.routes import analytics_routes
+from app.api.routes import auth_routes
 
 app = FastAPI()
 
@@ -26,6 +32,7 @@ async def startup():
         await conn.run_sync(Base.metadata.create_all)
 
 
+app.include_router(auth_routes.router)
 app.include_router(url_routes.router)
 app.include_router(redirect_routes.router)
 app.include_router(analytics_routes.router)

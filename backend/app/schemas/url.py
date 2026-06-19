@@ -14,6 +14,8 @@ class URLResponse(BaseModel):
     original_url: HttpUrl
     short_code: str
     created_at: datetime
+    expires_at: Optional[datetime] = None
+    click_count: Optional[int] = 0
     
     class Config:
         from_attributes = True

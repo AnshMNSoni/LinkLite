@@ -35,7 +35,8 @@ async def get_original_url(
     if not url:
         return None, None
     
-    if url.expires_at and url.expires_at < datetime.utcnow():
+    from datetime import timezone
+    if url.expires_at and url.expires_at < datetime.now(timezone.utc):
         return "EXPIRED", None
     
     # Store both the URL and its database ID as a JSON string in Redis
