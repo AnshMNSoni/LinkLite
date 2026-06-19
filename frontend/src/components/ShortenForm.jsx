@@ -2,7 +2,7 @@ import { useState } from "react";
 import { shortenUrl } from "../api/urls";
 import { useToast } from "./Toast";
 
-export default function ShortenForm({ setResult }) {
+export default function ShortenForm({ setResult, user }) {
   const [url, setUrl] = useState("");
   const [customCode, setCustomCode] = useState("");
   const [hasExpiration, setHasExpiration] = useState(false);
@@ -84,45 +84,47 @@ export default function ShortenForm({ setResult }) {
           </div>
         </div>
 
-        <div className="pt-1">
-          <div className="flex items-center gap-2">
-            <input
-              id="enable-expiry"
-              type="checkbox"
-              checked={hasExpiration}
-              onChange={(e) => {
-                setHasExpiration(e.target.checked);
-                if (e.target.checked && !expirationDate) {
-                  const tomorrow = new Date();
-                  tomorrow.setHours(tomorrow.getHours() + 24);
-                  const formatted = tomorrow.toISOString().substring(0, 16);
-                  setExpirationDate(formatted);
-                }
-              }}
-              className="w-4 h-4 text-brand-500 border-gray-300 rounded focus:ring-brand-500"
-            />
-            <label htmlFor="enable-expiry" className="text-sm font-medium text-gray-700 cursor-pointer">
-              Set Link Expiration
-            </label>
-          </div>
-
-          {hasExpiration && (
-            <div className="mt-3 animate-fade-in">
-              <label htmlFor="expiry-date" className="block text-xs font-semibold mb-1.5 text-gray-600">
-                Expires At
-              </label>
+        {user && (
+          <div className="pt-1">
+            <div className="flex items-center gap-2">
               <input
-                id="expiry-date"
-                type="datetime-local"
-                value={expirationDate}
-                min={new Date().toISOString().substring(0, 16)}
-                onChange={(e) => setExpirationDate(e.target.value)}
-                className="input-field text-sm"
-                required={hasExpiration}
+                id="enable-expiry"
+                type="checkbox"
+                checked={hasExpiration}
+                onChange={(e) => {
+                  setHasExpiration(e.target.checked);
+                  if (e.target.checked && !expirationDate) {
+                    const tomorrow = new Date();
+                    tomorrow.setHours(tomorrow.getHours() + 24);
+                    const formatted = tomorrow.toISOString().substring(0, 16);
+                    setExpirationDate(formatted);
+                  }
+                }}
+                className="w-4 h-4 text-brand-500 border-gray-300 rounded focus:ring-brand-500"
               />
+              <label htmlFor="enable-expiry" className="text-sm font-medium text-gray-700 cursor-pointer">
+                Set Link Expiration
+              </label>
             </div>
-          )}
-        </div>
+
+            {hasExpiration && (
+              <div className="mt-3 animate-fade-in">
+                <label htmlFor="expiry-date" className="block text-xs font-semibold mb-1.5 text-gray-600">
+                  Expires At
+                </label>
+                <input
+                  id="expiry-date"
+                  type="datetime-local"
+                  value={expirationDate}
+                  min={new Date().toISOString().substring(0, 16)}
+                  onChange={(e) => setExpirationDate(e.target.value)}
+                  className="input-field text-sm"
+                  required={hasExpiration}
+                />
+              </div>
+            )}
+          </div>
+        )}
 
         <button
           type="submit"

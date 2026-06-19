@@ -91,7 +91,7 @@ export default function App() {
           <div className="space-y-4">
             {activeTab === "shorten" && (
               <>
-                <ShortenForm setResult={setResult} />
+                <ShortenForm setResult={setResult} user={user} />
                 {result && <ResultCard result={result} />}
               </>
             )}
