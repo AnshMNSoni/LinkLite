@@ -144,27 +144,17 @@ export default function MyLinks() {
 
   return (
     <div className="glass-card p-5 sm:p-8 animate-slide-up">
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-5 sm:mb-6">
-        <div>
-          <h2 className="font-bold text-base sm:text-lg text-gray-900">Link Manager</h2>
-          <p className="text-xs" style={{ color: "var(--text-muted)" }}>List of your active and expired short codes</p>
-        </div>
-      </div>
-
       {links.length === 0 ? (
         <div
           className="flex flex-col items-center justify-center py-10 sm:py-12 rounded-xl"
           style={{ background: "rgba(0,0,0,0.02)", border: "1px dashed rgba(0,0,0,0.1)" }}
         >
-          <div className="inline-flex p-3 rounded-full bg-brand-50 text-brand-500 mb-3">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-            </svg>
-          </div>
-          <h3 className="font-semibold text-sm text-gray-900 mb-1">No links shortened yet</h3>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="w-10 h-10 sm:w-12 sm:h-12 mb-3" style={{ color: "var(--text-muted)" }}>
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+          </svg>
           <p className="text-xs text-gray-500 max-w-sm mx-auto text-center px-4">
-            Get started by pasting your first long URL in the Shorten tab!
+            Get started by pasting your first long URL
           </p>
         </div>
       ) : (

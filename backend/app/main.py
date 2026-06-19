@@ -32,9 +32,16 @@ app.add_middleware(
 async def startup():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-        # Ensure referrer column exists in the database
+        # Ensure required columns exist in existing tables for production updates
         from sqlalchemy import text
-        await conn.execute(text("ALTER TABLE clicks ADD COLUMN IF NOT EXISTS referrer VARCHAR;"))
+        try:
+            await conn.execute(text("ALTER TABLE urls ADD COLUMN IF NOT EXISTS user_id INTEGER;"))
+        except Exception as e:
+            print(f"Error adding user_id to urls table: {e}")
+        try:
+            await conn.execute(text("ALTER TABLE clicks ADD COLUMN IF NOT EXISTS referrer VARCHAR;"))
+        except Exception as e:
+            print(f"Error adding referrer to clicks table: {e}")
     
     # Start the click flusher background worker
     app.state.click_flusher = asyncio.create_task(click_flusher_worker())

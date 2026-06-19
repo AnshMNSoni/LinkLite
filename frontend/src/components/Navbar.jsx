@@ -99,7 +99,7 @@ export default function Navbar({ activeTab, onTabChange, user, onLogin, onLogout
             <div className="relative">
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="flex items-center gap-2 px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-brand-500/20 rounded-full border border-gray-100 hover:bg-gray-50/50 transition-colors"
+                className="flex items-center gap-2 p-0 sm:px-2.5 sm:py-1.5 focus:outline-none focus:ring-2 focus:ring-brand-500/20 rounded-full border-0 sm:border border-gray-100 hover:bg-transparent sm:hover:bg-gray-50/50 transition-colors"
                 aria-haspopup="true"
                 aria-expanded={dropdownOpen}
               >

@@ -55,14 +55,6 @@ export default function AnalyticsPage({ user, setRoute }) {
 
   return (
     <div className="glass-card p-5 sm:p-8 animate-slide-up">
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-5 sm:mb-6">
-        <div>
-          <h2 className="font-bold text-base sm:text-lg text-gray-900">Link Analytics</h2>
-          <p className="text-xs" style={{ color: "var(--text-muted)" }}>Enter a short code to view click statistics</p>
-        </div>
-      </div>
-
       {/* Search form — stacks vertically on mobile */}
       <form onSubmit={handleFetch} className="flex flex-col sm:flex-row gap-2 sm:gap-3 mb-5 sm:mb-6">
         <div className="flex flex-1 items-center gap-0">
@@ -125,7 +117,7 @@ export default function AnalyticsPage({ user, setRoute }) {
           {/* Short URL info */}
           {shortUrl && (
             <div
-              className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 rounded-xl bg-brand-500/10 border border-brand-500/20"
+              className="hidden sm:flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 px-3 sm:px-4 py-3 rounded-xl bg-brand-500/10 border border-brand-500/20"
             >
               <a
                 href={shortUrl}
