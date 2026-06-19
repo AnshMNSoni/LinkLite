@@ -1,5 +1,9 @@
 # LinkLite
 
+<p align="center">
+  <img src="logo.png" width="120" alt="LinkLite Logo" />
+</p>
+
 ![Python](https://img.shields.io/badge/Python-3.10+-blue?logo=python)
 ![FastAPI](https://img.shields.io/badge/FastAPI-Backend-009688?logo=fastapi)
 ![React](https://img.shields.io/badge/React-Frontend-61DAFB?logo=react)
