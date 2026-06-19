@@ -1,10 +1,27 @@
 import { useState } from "react";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { fetchAnalytics } from "../api/analytics";
 import StatsChart from "./StatsChart";
 import CopyButton from "./CopyButton";
 import { useToast } from "./Toast";
 
-export default function AnalyticsPage() {
+const COLORS = ["#10b981", "#3b82f6", "#f59e0b", "#ef4444", "#8b5cf6"];
+
+const DonutTooltip = ({ active, payload }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="p-2 bg-white/95 backdrop-blur-sm border border-gray-150 rounded-lg shadow-md">
+        <p className="text-[11px] font-semibold text-gray-800">{payload[0].name}</p>
+        <p className="text-[11px] font-bold text-brand-600 mt-0.5">
+          {payload[0].value} click{payload[0].value !== 1 ? "s" : ""}
+        </p>
+      </div>
+    );
+  }
+  return null;
+};
+
+export default function AnalyticsPage({ user, setRoute }) {
   const [code, setCode] = useState("");
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -19,6 +36,11 @@ export default function AnalyticsPage() {
       const result = await fetchAnalytics(code.trim());
       setData(result);
     } catch (err) {
+      if (err.response?.status === 403) {
+        window.history.pushState({}, "", "/unauthorized");
+        setRoute("unauthorized");
+        return;
+      }
       const msg = err.response?.status === 404
         ? "Short code not found"
         : "Failed to fetch analytics";
@@ -129,6 +151,151 @@ export default function AnalyticsPage() {
             </div>
             <StatsChart data={data.daily_clicks} />
           </div>
+          {/* Detailed Stats Grid */}
+          {user && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+              {/* Device & Platform Insights */}
+              <div className="glass-card p-5 sm:p-6 border-gray-100 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-sm font-semibold mb-5 text-gray-900 flex items-center gap-2">
+                    <svg className="w-4 h-4 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    Audience Insights
+                  </h3>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    {/* Browsers */}
+                    <div className="flex flex-col items-center space-y-4">
+                      <h4 className="text-[10px] font-bold uppercase tracking-wider text-gray-400 self-start">Browsers</h4>
+                      {data.browsers && data.browsers.length > 0 ? (
+                        <div className="w-full flex flex-col items-center space-y-4">
+                          <div className="w-24 h-24 flex items-center justify-center">
+                            <ResponsiveContainer width="100%" height="100%">
+                              <PieChart>
+                                <Pie
+                                  data={data.browsers}
+                                  dataKey="clicks"
+                                  nameKey="name"
+                                  innerRadius={22}
+                                  outerRadius={38}
+                                  paddingAngle={2}
+                                >
+                                  {data.browsers.map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                  ))}
+                                </Pie>
+                                <Tooltip content={<DonutTooltip />} />
+                              </PieChart>
+                            </ResponsiveContainer>
+                          </div>
+                          <div className="w-full space-y-1.5">
+                            {data.browsers.slice(0, 4).map((b, idx) => (
+                              <div key={b.name} className="flex items-center justify-between text-[11px] w-full px-1">
+                                <div className="flex items-center gap-1.5 min-w-0">
+                                  <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: COLORS[idx % COLORS.length] }} />
+                                  <span className="font-semibold text-gray-600 truncate" title={b.name}>{b.name}</span>
+                                </div>
+                                <span className="font-bold text-gray-900 ml-2">{b.clicks}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-xs text-gray-400 py-6 text-center">No browser data</div>
+                      )}
+                    </div>
+
+                    {/* OS Systems */}
+                    <div className="flex flex-col items-center space-y-4">
+                      <h4 className="text-[10px] font-bold uppercase tracking-wider text-gray-400 self-start">Platforms / OS</h4>
+                      {data.os && data.os.length > 0 ? (
+                        <div className="w-full flex flex-col items-center space-y-4">
+                          <div className="w-24 h-24 flex items-center justify-center">
+                            <ResponsiveContainer width="100%" height="100%">
+                              <PieChart>
+                                <Pie
+                                  data={data.os}
+                                  dataKey="clicks"
+                                  nameKey="name"
+                                  innerRadius={22}
+                                  outerRadius={38}
+                                  paddingAngle={2}
+                                >
+                                  {data.os.map((entry, index) => (
+                                    <Cell key={`cell-${index}`} fill={COLORS[(index + 2) % COLORS.length]} />
+                                  ))}
+                                </Pie>
+                                <Tooltip content={<DonutTooltip />} />
+                              </PieChart>
+                            </ResponsiveContainer>
+                          </div>
+                          <div className="w-full space-y-1.5">
+                            {data.os.slice(0, 4).map((o, idx) => (
+                              <div key={o.name} className="flex items-center justify-between text-[11px] w-full px-1">
+                                <div className="flex items-center gap-1.5 min-w-0">
+                                  <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: COLORS[(idx + 2) % COLORS.length] }} />
+                                  <span className="font-semibold text-gray-600 truncate" title={o.name}>{o.name}</span>
+                                </div>
+                                <span className="font-bold text-gray-900 ml-2">{o.clicks}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-xs text-gray-400 py-6 text-center">No platform data</div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="text-[10px] text-gray-400 text-center pt-5 border-t border-gray-50 mt-4">
+                  Device insights summarize visitor browsers and operating systems.
+                </div>
+              </div>
+
+              {/* Referrer Sources list & stats */}
+              <div className="glass-card p-5 sm:p-6 border-gray-100 flex flex-col justify-between">
+                <div>
+                  <h3 className="text-sm font-semibold mb-5 text-gray-900 flex items-center gap-2">
+                    <svg className="w-4 h-4 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                    </svg>
+                    Referrer Sources
+                  </h3>
+                  {data.referrers && data.referrers.length > 0 ? (
+                    <div className="space-y-3.5">
+                      {[...data.referrers].sort((a,b) => b.clicks - a.clicks).slice(0, 4).map((r) => {
+                        const totalClicksCount = data.total_clicks || 1;
+                        const percentage = Math.round((r.clicks / totalClicksCount) * 100);
+                        return (
+                          <div key={r.name} className="space-y-1">
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="font-semibold text-gray-700">{r.name}</span>
+                              <span className="text-gray-500 font-medium">
+                                {r.clicks} click{r.clicks !== 1 ? "s" : ""} ({percentage}%)
+                              </span>
+                            </div>
+                            <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                              <div
+                                className="h-full bg-brand-500 rounded-full"
+                                style={{ width: `${percentage}%` }}
+                              />
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="text-xs text-gray-400 text-center py-12">No referrer data captured yet</div>
+                  )}
+                </div>
+                <div className="text-[10px] text-gray-400 text-center pt-5 border-t border-gray-50 mt-4">
+                  Referral metrics show where users found your link before redirecting.
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Daily breakdown table */}
           {data.daily_clicks.length > 0 && (

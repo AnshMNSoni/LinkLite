@@ -28,3 +28,130 @@ async def get_daily_clicks(db: AsyncSession, url_id: int):
         {"date": row.date, "clicks": row.clicks}
         for row in result.all()
     ]
+
+
+from collections import Counter
+from urllib.parse import urlparse
+
+def parse_browser(ua: str) -> str:
+    if not ua:
+        return "Unknown"
+    ua = ua.lower()
+    if "chrome" in ua or "chromium" in ua:
+        if "edg" in ua:
+            return "Edge"
+        if "opr" in ua or "opera" in ua:
+            return "Opera"
+        return "Chrome"
+    elif "safari" in ua:
+        return "Safari"
+    elif "firefox" in ua:
+        return "Firefox"
+    elif "msie" in ua or "trident" in ua:
+        return "IE"
+    elif "curl" in ua:
+        return "Curl (CLI)"
+    elif "postman" in ua:
+        return "Postman Client"
+    elif "python" in ua or "requests" in ua:
+        return "Python Script"
+    return "Other"
+
+
+def parse_os(ua: str) -> str:
+    if not ua:
+        return "Unknown"
+    ua = ua.lower()
+    if "windows" in ua:
+        return "Windows"
+    elif "macintosh" in ua or "mac os x" in ua:
+        if "ipad" in ua or "iphone" in ua or "ipod" in ua:
+            return "iOS"
+        return "macOS"
+    elif "android" in ua:
+        return "Android"
+    elif "iphone" in ua or "ipad" in ua or "ipod" in ua:
+        return "iOS"
+    elif "linux" in ua:
+        if "curl" in ua:
+            return "CLI Client"
+        return "Linux"
+    elif "curl" in ua or "postman" in ua or "python" in ua or "requests" in ua:
+        return "CLI / API Client"
+    return "Other"
+
+
+def parse_referrer(ref: str) -> str:
+    if not ref:
+        return "Direct / Email"
+    
+    ref = ref.lower()
+    if ref.startswith("android-app://"):
+        if "linkedin" in ref:
+            return "LinkedIn"
+        if "twitter" in ref or "t.co" in ref:
+            return "Twitter / X"
+        if "facebook" in ref:
+            return "Facebook"
+        if "instagram" in ref:
+            return "Instagram"
+        if "whatsapp" in ref:
+            return "WhatsApp"
+        if "peerlist" in ref:
+            return "Peerlist"
+    
+    try:
+        parsed = urlparse(ref)
+        domain = parsed.netloc
+        if not domain:
+            domain = parsed.path
+        
+        if "linkedin.com" in domain:
+            return "LinkedIn"
+        elif "t.co" in domain or "twitter.com" in domain or "x.com" in domain:
+            return "Twitter / X"
+        elif "facebook.com" in domain or "fb.me" in domain:
+            return "Facebook"
+        elif "instagram.com" in domain:
+            return "Instagram"
+        elif "peerlist.io" in domain:
+            return "Peerlist"
+        elif "github.com" in domain:
+            return "GitHub"
+        elif "google.com" in domain:
+            return "Google"
+        elif "youtube.com" in domain:
+            return "YouTube"
+        elif "reddit.com" in domain:
+            return "Reddit"
+        elif "whatsapp.com" in domain:
+            return "WhatsApp"
+        
+        clean_domain = domain.replace("www.", "")
+        return clean_domain if clean_domain else "Direct / Email"
+    except Exception:
+        return "Other"
+
+
+async def get_clicks_breakdown(db: AsyncSession, url_id: int):
+    query = select(Click.user_agent, Click.referrer).where(Click.url_id == url_id)
+    result = await db.execute(query)
+    rows = result.all()
+    
+    browsers = Counter()
+    os_systems = Counter()
+    referrers = Counter()
+    
+    for row in rows:
+        ua = row.user_agent
+        ref = row.referrer
+        
+        browsers[parse_browser(ua)] += 1
+        os_systems[parse_os(ua)] += 1
+        referrers[parse_referrer(ref)] += 1
+        
+    return {
+        "browsers": [{"name": k, "clicks": v} for k, v in browsers.items()],
+        "os": [{"name": k, "clicks": v} for k, v in os_systems.items()],
+        "referrers": [{"name": k, "clicks": v} for k, v in referrers.items()]
+    }

@@ -49,7 +49,8 @@ async def get_original_url(
 async def record_click_task(
     url_id: int,
     ip_address: str | None = None,
-    user_agent: str | None = None
+    user_agent: str | None = None,
+    referrer: str | None = None
 ):
     """
     Buffer click events in Redis List queue to be batched and saved to DB by flusher worker.
@@ -59,6 +60,7 @@ async def record_click_task(
         "url_id": url_id,
         "ip_address": ip_address,
         "user_agent": user_agent,
+        "referrer": referrer,
         "clicked_at": datetime.now(timezone.utc).isoformat()
     }
     await redis_client.rpush("clicks_queue", json.dumps(click_data))

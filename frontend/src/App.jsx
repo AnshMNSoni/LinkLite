@@ -13,6 +13,7 @@ export default function App() {
     const path = window.location.pathname.replace(/\/$/, "");
     if (path === "/expired") return "expired";
     if (path === "/not-found") return "not-found";
+    if (path === "/unauthorized") return "unauthorized";
     return "app";
   });
   const [result, setResult] = useState(null);
@@ -73,11 +74,17 @@ export default function App() {
               {/* Content */}
               <div className="space-y-2">
                 <h1 className="text-2xl font-bold tracking-tight text-gray-900">
-                  {route === "expired" ? "This Link Has Expired" : "Link Not Found"}
+                  {route === "expired" 
+                    ? "This Link Has Expired" 
+                    : route === "unauthorized" 
+                    ? "Access Denied" 
+                    : "Link Not Found"}
                 </h1>
                 <p className="text-sm text-gray-500 max-w-sm mx-auto leading-relaxed">
                   {route === "expired" 
                     ? "The creator of this link configured an expiration date, and it is no longer active." 
+                    : route === "unauthorized"
+                    ? "You do not have permission to view analytics for this link."
                     : "The short URL you are trying to visit does not exist, has been deleted, or is invalid."
                   }
                 </p>
@@ -151,7 +158,7 @@ export default function App() {
                 </>
               )}
               {activeTab === "my-links" && user && <MyLinks />}
-              {activeTab === "analytics" && <AnalyticsPage />}
+              {activeTab === "analytics" && <AnalyticsPage user={user} setRoute={setRoute} />}
             </div>
 
             {/* Footer */}

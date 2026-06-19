@@ -32,6 +32,7 @@ async def flush_clicks_to_db():
                 "url_id": data["url_id"],
                 "ip_address": data.get("ip_address"),
                 "user_agent": data.get("user_agent"),
+                "referrer": data.get("referrer"),
                 "clicked_at": clicked_at
             })
         except Exception as e:

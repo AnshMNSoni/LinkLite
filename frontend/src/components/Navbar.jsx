@@ -107,6 +107,7 @@ export default function Navbar({ activeTab, onTabChange, user, onLogin, onLogout
                   src={user.picture || "https://www.gravatar.com/avatar?d=mp"}
                   alt={user.name || "Profile"}
                   className="w-7 h-7 rounded-full border border-gray-200 object-cover"
+                  referrerPolicy="no-referrer"
                 />
                 <span className="text-xs font-semibold text-gray-700 hidden sm:inline-block">
                   {user.name}
